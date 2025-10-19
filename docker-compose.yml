@@ -1,0 +1,57 @@
+services:
+  ai-service:
+    build: ./apps/ai-service
+    container_name: ai-service
+    expose:
+      - "50051:50051"
+    volumes:
+      - ./apps/ai-service:/app
+    command: python
+    restart: unless-stopped
+
+  api-server:
+    build: ./apps/api-server
+    container_name: api-server
+    ports:
+      - "8000:8000"   
+    volumes:
+      - ./apps/api-server:/app
+    command: uv run gunicorn src.app:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers 4
+    restart: unless-stopped
+
+  worker:
+    build: ./apps/worker
+    container_name: worker
+    depends_on:
+      - ai-service
+    volumes:
+      - ./apps/worker:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./apps/frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    command: bun run dev --host
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:1562"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  rabbitmq-data:

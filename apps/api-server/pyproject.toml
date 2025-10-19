@@ -1,10 +1,18 @@
 [project]
 name = "api-server"
 version = "0.1.0"
-description = "Documind API"
-requires-python=">=3.13"
+description = "Add your description here"
+requires-python = ">3.11,<3.14"
 dependencies = [
     "fastapi>=0.119.0",
+    "gunicorn>=23.0.0",
+    "uvicorn>=0.38.0",
 ]
 
-# TBD
+[build-system]
+requires = ["uv_build>=0.9.4,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "src"
+module-root = ""
