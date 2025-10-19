@@ -1,5 +1,0 @@
-{
-    "name": "documind-monorepo",
-    "private": true,
-    "workspaces": ["apps/*"]
-}
