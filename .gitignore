@@ -1,3 +1,6 @@
 .venv
 **/node_modules
 .env
+.vscode
+.ruff_cache
+**/__pycache__
