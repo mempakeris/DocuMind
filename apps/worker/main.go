@@ -1,13 +1,19 @@
 package main
 
-import "fmt"
-import "time"
+import (
+	"runtime"
+
+	services "github.com/mempakeris/documind/worker/services"
+)
 
 func main() {
-	fmt.Print("Go worker started...")
-
-	for {
-		fmt.Println("Processing job...")
-		time.Sleep(5 * time.Second)
+	numWorkers := runtime.NumCPU()
+	messageQueue := services.ConnectToMessageQueue()
+	defer messageQueue.Channel.Close()
+	forever := make(chan bool)
+	messages := services.ConsumeMessages(&messageQueue)
+	for workerId := range numWorkers {
+		go services.SendRequestsToAIService(workerId, messages)
 	}
+	<-forever
 }

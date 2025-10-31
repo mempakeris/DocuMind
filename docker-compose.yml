@@ -31,6 +31,10 @@ services:
       - postgres
     volumes:
       - ./apps/worker:/app
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
     restart: unless-stopped
 
   frontend:
