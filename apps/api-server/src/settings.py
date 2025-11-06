@@ -1,8 +1,7 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT_DIR = 3
-ENV_FILE = Path(__file__).resolve().parents[ROOT_DIR] / ".env"
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 
 
 class Settings(BaseSettings):
@@ -12,6 +11,11 @@ class Settings(BaseSettings):
     rabbitmq_default_user: str
     rabbitmq_default_pass: str
     rabbitmq_default_vhost: str
+    insight_message_queue: str
+    document_bucket: str
+    minio_root_user: str
+    minio_root_password: str
+    minio_endpoint: str
     model_config = SettingsConfigDict(env_file=ENV_FILE, env_file_encoding="utf-8")
 
 
