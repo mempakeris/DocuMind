@@ -7,11 +7,12 @@ from src.types.insight import InsightRequest
 
 
 async def create_queue_connection() -> aio_pika.RobustConnection:
-    print('THIS IS A TEST', settings.rabbitmq_default_pass, settings.rabbitmq_default_user, settings.rabbitmq_default_vhost)
+    print('test')
     return await aio_pika.connect_robust(
-        host=settings.rabbitmq_default_vhost,
+        host=settings.rabbitmq_host,
         login=settings.rabbitmq_default_user,
         password=settings.rabbitmq_default_pass,
+        virtualhost=settings.rabbitmq_default_vhost
     )
 
 async def get_queue_connection(request: Request) -> aio_pika.RobustConnection:

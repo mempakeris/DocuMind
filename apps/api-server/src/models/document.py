@@ -21,18 +21,18 @@ class Sentiment(IntEnum):
 
 class Document(IDMixin, TimestampMixin, SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
-    summary: str = Field(sa_column=Text)
+    summary: str | None = Field(sa_column=Text)
     doc_location: str = Field()
-    category: str = Field()
-    sentiment: Sentiment = Field()
-    title: str = Field()
+    category: str | None = Field(nullable=True)
+    sentiment: Sentiment | None = Field(nullable=True)
+    title: str | None = Field(nullable=True)
     # separate table is overkill
-    key_points: list[str] = Field(sa_column=Column(ARRAY(String)))
-    read_time_est_min: int = Field()
-    word_count: int = Field()
-    language_code: str = Field()
+    key_points: list[str] | None = Field(sa_column=Column(ARRAY(String)))
+    read_time_est_min: int | None = Field(nullable=True)
+    word_count: int | None = Field(nullable=True)
+    language_code: str | None = Field(nullable=True)
     summary_model: str | None = Field(nullable=True)
     process_status: Status = Field(default=Status.PENDING)
-    embedding: bytes = Field(sa_column=Vector)
+    embedding: bytes | None = Field(sa_column=Vector)
 
     user: User = Relationship(back_populates="documents")
