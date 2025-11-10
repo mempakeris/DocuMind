@@ -7,26 +7,29 @@ from src.types.insight import InsightRequest
 
 
 async def create_queue_connection() -> aio_pika.RobustConnection:
-    print('test')
     return await aio_pika.connect_robust(
         host=settings.rabbitmq_host,
         login=settings.rabbitmq_default_user,
         password=settings.rabbitmq_default_pass,
-        virtualhost=settings.rabbitmq_default_vhost
+        virtualhost=settings.rabbitmq_default_vhost,
     )
+
 
 async def get_queue_connection(request: Request) -> aio_pika.RobustConnection:
     return request.app.queue_connection
 
-async def publish_task(connection: aio_pika.RobustConnection, payload: InsightRequest) -> bool:
+
+async def publish_task(
+    connection: aio_pika.RobustConnection, payload: InsightRequest
+) -> bool:
     channel = await connection.channel()
     queue = await channel.declare_queue(settings.insight_message_queue, durable=True)
     await channel.default_exchange.publish(
         message=aio_pika.Message(
             body=json.dumps(payload.model_dump()).encode(),
-            content_type='application/json',
-            delivery_mode=aio_pika.DeliveryMode.PERSISTENT
+            content_type="application/json",
+            delivery_mode=aio_pika.DeliveryMode.PERSISTENT,
         ),
-        routing_key=queue.name
+        routing_key=queue.name,
     )
     return True

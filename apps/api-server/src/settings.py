@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 
+
 class Settings(BaseSettings):
     postgres_user: str
     postgres_password: str

@@ -1,7 +1,6 @@
 services:
   ai-service:
     build: ./apps/ai-service
-    container_name: ai-service
     expose:
       - "50051:50051"
     volumes:
@@ -11,18 +10,17 @@ services:
 
   api:
     build: ./apps/api-server
-    container_name: api
     ports:
       - "8000:8000"   
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: ./apps/api-server
           target: /app
           ignore: .venv/
         - action: rebuild
           path: ./apps/api-server/pyproject.toml
-    command: uv run gunicorn src.app:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --workers 4
+    command: uv run gunicorn src.app:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     restart: unless-stopped
     depends_on:
       - postgres
@@ -31,7 +29,6 @@ services:
 
   worker:
     build: ./apps/worker
-    container_name: worker
     depends_on:
       - ai-service
       - rabbitmq
@@ -46,9 +43,8 @@ services:
 
   frontend:
     build: ./apps/frontend
-    container_name: frontend
     ports:
-      - "5173:5173"
+      - "5173:517"
     volumes:
       - ./apps/frontend:/app
       - /app/node_modules
@@ -59,7 +55,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:4.1.4-management
-    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:1562"
@@ -73,7 +68,6 @@ services:
 
   postgres:
     image: pgvector/pgvector:pg18
-    container_name: db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DATABASE}
@@ -86,7 +80,6 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: minio
     ports:
       - "9000:9000"
       - "9001:9001"

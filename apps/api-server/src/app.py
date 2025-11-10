@@ -5,6 +5,7 @@ from src.services import message_queue as message_queue_services
 from src.routes import blob_storage as blob_storage_routes
 from src.routes import insight as insight_routes
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     queue_connection = await message_queue_services.create_queue_connection()

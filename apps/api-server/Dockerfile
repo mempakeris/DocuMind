@@ -1,8 +1,7 @@
-FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
-RUN groupadd --system --gid 999 nonroot \
- && useradd --system --gid 999 --uid 999 --create-home nonroot
-
+RUN addgroup -S -g 2000 nonroot \
+ && adduser -S -u 2000 -G nonroot -h /home/nonroot nonroot
 USER nonroot
 
 WORKDIR /app
@@ -23,7 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
-COPY . /app
+COPY --chown=nonroot:nonroot . /app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev

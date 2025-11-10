@@ -1,6 +1,6 @@
 from enum import IntEnum
 from sqlmodel import SQLModel, Field, Relationship
-from src.models.base import IDMixin, TimestampMixin
+from src.models.base import BaseModel
 from src.models.user import User
 from sqlalchemy import ARRAY, Text, String, Column
 from pydantic import HttpUrl
@@ -19,7 +19,7 @@ class Sentiment(IntEnum):
     NEGATIVE = 3
 
 
-class Document(IDMixin, TimestampMixin, SQLModel, table=True):
+class Document(BaseModel, SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     summary: str | None = Field(sa_column=Text)
     doc_location: str = Field()
@@ -35,4 +35,4 @@ class Document(IDMixin, TimestampMixin, SQLModel, table=True):
     process_status: Status = Field(default=Status.PENDING)
     embedding: bytes | None = Field(sa_column=Vector)
 
-    user: User = Relationship(back_populates="documents")
+    user: User = Relationship()
